@@ -85,5 +85,5 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 $active_lang = $_POST['active_lang'] ?? 'all';
 // 削除完了のステータスを付けてトップページへ戻る
 // header('Location: index.php?status=deleted');
-header("Location: index.php?active_lang=" . urlencode($active_lang));
+header("Location: index.php?l=" . urlencode($active_lang));
 exit;

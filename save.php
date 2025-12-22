@@ -26,7 +26,7 @@ $uid = "guestUser"; // FirebaseのGoogleログインを導入
 // コードが空の場合は保存せずに戻る
 if (empty(trim($code))) {
     // header('Location: index.php');
-    header("Location: index.php?active_lang=" . urlencode($lang));
+    header("Location: index.php?l=" . urlencode($lang));
     exit;
 }
 
@@ -134,7 +134,7 @@ file_put_contents($statsFile, json_encode($currentStats, JSON_PRETTY_PRINT | JSO
 // header('Location: index.php');
 
 // リダイレクト時に lang パラメータを付与する
-header("Location: index.php?active_lang=" . urlencode($lang));
+header("Location: index.php?l=" . urlencode($lang));
 exit;
 
 // PHPのみのファイルなので ? > は書かない
