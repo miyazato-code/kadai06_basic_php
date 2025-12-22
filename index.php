@@ -73,7 +73,7 @@ if ($statFiles) {
 
 
 // URLのパラメータを受け取り、対応するボタンに is-active クラスを付与
-$active_lang = $_GET['active_lang'] ?? 'all';
+$active_lang = $_GET['l'] ?? 'all';
 
 ?>
 

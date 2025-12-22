@@ -119,8 +119,8 @@ const applyFilter = (filter) => {
 //URLパラメータを更新する関数
 const updateUrlParam = (filter) => {
     const url = new URL(window.location.origin + window.location.pathname);
-    // 常に active_lang だけをセットしたクリーンなURLを作成
-    url.searchParams.set('active_lang', filter);
+    // 常に l だけをセットしたクリーンなURLを作成
+    url.searchParams.set('l', filter);
     // ブラウザの履歴を更新（ページ遷移はしない）
     window.history.replaceState({}, '', url.toString());
 };
