@@ -26,17 +26,17 @@ function h(string $s): string {
     // $dataItems = array_reverse($dataItems);
 // }
 
-$jsonFile = glob('data/archive_*.json');
+$jsonFiles = glob('data/archive_*.json');
 $allDataItems = [];
 $dataItems = [];
 
-if ($jsonFile) {
+if ($jsonFiles) {
 
-    sort($jsonFile);
+    sort($jsonFiles);
 
-    foreach ($jsonFile as $jsonFile) {
-        if (is_readable($jsonFile)) {
-            $jsonContent = file_get_contents($jsonFile);
+    foreach ($jsonFiles as $filePath) {
+        if (is_readable($filePath)) {
+            $jsonContent = file_get_contents($filePath);
             $decodedData = json_decode($jsonContent, true);
 
             if (is_array($decodedData)) {
@@ -70,6 +70,7 @@ if ($statFiles) {
         }
     }
 }
+
 
 // URLのパラメータを受け取り、対応するボタンに is-active クラスを付与
 $active_lang = $_GET['active_lang'] ?? 'all';
@@ -116,15 +117,7 @@ $active_lang = $_GET['active_lang'] ?? 'all';
           
                 <?php foreach ($displayItems as $item): ?>
 
-                    <article class="c-card" code-lang="<?= h($item['lang']) ?>">
-
-                        <!-- <form action="delete.php" method="post" class="c-card__delete-form"> -->
-                            <!-- <input type="hidden" name="id" value="<?= h($item['id']) ?>"> -->
-                            <!-- <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>"> -->
-                            <!-- <button type="submit" class="c-card__delete-btn" title="削除" onclick="return confirm('削除しますか？')"> -->
-                                <!-- <span class="c-card__delete-icon"></span> -->
-                            <!-- </button> -->
-                        <!-- </form> -->
+                    <article class="c-card" code-lang="<?= h($item['lang']) ?>" data-id="<?= h($item['id']) ?>"> 
 
                         <div class="c-card__delete-form">
                             <button type="button" class="c-card__delete-btn" title="削除" onclick="openDeleteModal('<?= h($item['id']) ?>')">

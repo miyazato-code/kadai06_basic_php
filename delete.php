@@ -73,9 +73,17 @@ deleteIdFromJsonFiles('data/stats_*.json', $targetId);
 // 4. 完了後のリダイレクト
 // ------------------------------------------------------------
 
-$active_lang = $_POST['active_lang'] ?? 'all';
 
+// 非同期通信か判断
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    // JS側に成功を伝える（リダイレクトはしない）
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'success']);
+    exit;
+}
+
+$active_lang = $_POST['active_lang'] ?? 'all';
 // 削除完了のステータスを付けてトップページへ戻る
 // header('Location: index.php?status=deleted');
-header("Location: index.php?status=deleted&active_lang=" . urlencode($active_lang));
+header("Location: index.php?active_lang=" . urlencode($active_lang));
 exit;

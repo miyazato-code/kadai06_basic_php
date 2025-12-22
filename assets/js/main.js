@@ -6,7 +6,7 @@ const languagePatterns = {
 
     // Python: 関数定義、インポート、制御構文、self、メインブロック、デコレータ
     python: /\b(def|import|from|as|elif|None|True|False)\b|print\(|self\.|if\s+__name__\s+==|@[\w]+/i,
-    
+
     // TypeScript: 型定義(interface/type/enum)、型アノテーション(: string等)、アクセス修飾子
     typescript: /\b(interface|type|enum)\s+\w+|:\s+(string|number|boolean|any|void)\b|<\w+>|private\s+\w+:|readonly\s+/i,
 
@@ -25,6 +25,23 @@ const languagePatterns = {
 const STORAGE_KEY = 'codydex_draft';
 
 // --- 2. ユーティリティ関数の定義 ---
+
+/**
+ * トースト通知を表示する
+ * @param {string} message - 表示するメッセージ
+ */
+function showToast(message) {
+    const toast = document.querySelector('#js-toast');
+    if (!toast) return;
+    
+    toast.textContent = message; // メッセージを注入
+    toast.classList.add('is-show'); // 表示クラスを追加
+    
+    // 3秒後に非表示にする
+    setTimeout(() => {
+        toast.classList.remove('is-show');
+    }, 3000);
+}
 
 /**
  * デバウンス関数：短時間に連続して発生するイベント（入力など）の実行を、
@@ -99,6 +116,44 @@ const applyFilter = (filter) => {
     });
 };
 
+//URLパラメータを更新する関数
+const updateUrlParam = (filter) => {
+    const url = new URL(window.location.origin + window.location.pathname);
+    // 常に active_lang だけをセットしたクリーンなURLを作成
+    url.searchParams.set('active_lang', filter);
+    // ブラウザの履歴を更新（ページ遷移はしない）
+    window.history.replaceState({}, '', url.toString());
+};
+
+/**
+ * 削除モーダル表示
+ */
+function openDeleteModal(id) {
+    const modal = document.querySelector('#js-delete-modal');
+    const idInput = document.querySelector('#js-delete-id');
+    const langInput = document.querySelector('#js-delete-active-lang');
+
+    if (!modal || !idInput) return;
+
+    // 削除対象のIDをセット
+    idInput.value = id;
+
+    // 現在アクティブなタブの lang-filter を取得してセット
+    const activeTab = document.querySelector('.c-tabs__item.is-active');
+    if (activeTab && langInput) {
+        langInput.value = activeTab.getAttribute('lang-filter');
+    }
+
+    modal.showModal();
+}
+
+/**
+ * 削除モーダルを閉じる
+ */
+function closeDeleteModal() {
+    document.querySelector('#js-delete-modal')?.close();
+}
+
 // --- 3. メイン初期化処理 ---
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -110,7 +165,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.c-tabs__item');
     const submitBtn = document.querySelector('.c-search__submit');
     const deleteModal = document.querySelector('#js-delete-modal');
-    const deleteIdInput = document.querySelector('#js-delete-id');
+    // const deleteIdInput = document.querySelector('#js-delete-id');
+    // const toast = document.querySelector('#js-toast');
+    const deleteForm = document.querySelector('#js-delete-form'); // 削除フォームの取得
+
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // 通常の送信(ページ遷移)をキャンセル
+
+            const formData = new FormData(deleteForm);
+            const targetId = formData.get('id');
+
+            try {
+                // 背景で delete.php を実行
+                const response = await fetch('delete.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                if (response.ok) {
+                    closeDeleteModal(); // モーダルを閉じる
+                    
+                    // カードを滑らかに消すアニメーション
+                    const card = document.querySelector(`.c-card[data-id="${targetId}"]`);
+                    if (card) {
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95) translateY(10px)';
+                        
+                        // アニメーション完了後に要素を削除
+                        setTimeout(() => {
+                            card.remove();
+                            // ここで通知を表示
+                            showToast('削除しました'); 
+                        }, 400);
+                    }
+                } else {
+                    showToast('削除に失敗しました');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showToast('ネットワークエラーが発生しました');
+            }
+        });
+    }
 
     // 下書き復元ロジック
     const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -128,6 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (initialActiveTab) {
         const initialFilter = initialActiveTab.getAttribute('lang-filter');
         applyFilter(initialFilter);
+        // 初回ロード時はURLパラメータも同期（URLにない場合のため）
+        updateUrlParam(initialFilter);
         setTimeout(() => scrollToActiveTab(initialActiveTab), 150); // 描画完了を待ってからスクロール
     }
 
@@ -156,11 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // イベント登録：タブクリック（フィルタリング & 移動）
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
+            // クラスの付け替え
             document.querySelector('.c-tabs__item.is-active')?.classList.remove('is-active');
             tab.classList.add('is-active');
 
             const filter = tab.getAttribute('lang-filter');
+            // 1. フィルタ適用
             applyFilter(filter);
+            // 2. URLの書き換え
+            updateUrlParam(filter);
+            // 3. スクロール調整
             scrollToActiveTab(tab);
 
             // モバイル時は上に戻ってリストを見やすくする
@@ -196,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 送信時の処理（ストレージ削除）
     form?.addEventListener('submit', () => {
+        // 送信直前に、現在のフィルタ状況を hidden フィールドに同期（もし必要なら）
         localStorage.removeItem(STORAGE_KEY);
     });
 
@@ -205,35 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(() => TimeUtil.updateAll(), 60000);
         window.addEventListener('focus', () => TimeUtil.updateAll());
     }
+
+
 });
-
-// --- 4. グローバル関数の定義（HTMLから呼び出す用） ---
-
-/**
- * 削除モーダル表示
- */
-function openDeleteModal(id) {
-    const modal = document.querySelector('#js-delete-modal');
-    const idInput = document.querySelector('#js-delete-id');
-    const langInput = document.querySelector('#js-delete-active-lang');
-
-    if (!modal || !idInput) return;
-    
-    // 削除対象のIDをセット
-    idInput.value = id;
-
-    // 現在アクティブなタブの lang-filter を取得してセット
-    const activeTab = document.querySelector('.c-tabs__item.is-active');
-    if (activeTab && langInput) {
-        langInput.value = activeTab.getAttribute('lang-filter');
-    }
-
-    modal.showModal();
-}
-
-/**
- * 削除モーダルを閉じる
- */
-function closeDeleteModal() {
-    document.querySelector('#js-delete-modal')?.close();
-}
