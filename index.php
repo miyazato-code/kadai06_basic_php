@@ -93,6 +93,7 @@ $active_lang = $_GET['l'] ?? 'all';
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
     <!-- 許可されたソース以外のスクリプト実行を制限し、XSS攻撃を防止するセキュリティ設定 -->
     <title>codyDex</title>
+    <link rel="icon" href="assets/img/icon/codydex-fav.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
