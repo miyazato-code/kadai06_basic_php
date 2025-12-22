@@ -278,7 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         // Ctrl + Enter (または Cmd + Enter) で送信
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            if (codeInput?.value.trim() !== "") form?.submit();
+            if (codeInput?.value.trim() !== "") {
+                submitBtn?.click(); // submitボタンをプログラムからクリックする
+            }
         }
     });
 
