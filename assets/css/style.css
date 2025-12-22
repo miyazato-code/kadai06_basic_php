@@ -1,0 +1,672 @@
+/*                  _         ____               */
+/*   ___  ___    __| | _   _ |  _ \   ___ __  __ */
+/*  / __|/ _ \  / _` || | | || | | | / _ \\ \/ / */
+/* | (__| (_) || (_| || |_| || |_| ||  __/ >  <  */
+/*  \___|\___/  \__,_| \__, ||____/  \___|/_/\_\ */
+/*                     |___/                     */
+
+/* ------------------------------------------------------------
+  Variables & Theme
+------------------------------------------------------------ */
+:root {
+    --color-bg: #0d1117;
+    --color-card: #161b22;
+    --color-border: #30363d;
+    --color-accent: #2f81f7;
+    --color-danger: #f85149;
+    --color-text-main: #e6edf3;
+    --color-text-sub: #8b949e;
+
+    --lang-default: #8b949e;
+    --color-html: #e34c26;
+    /* オレンジ */
+    --color-css: #264de4;
+    /* ブルー */
+    --color-js: #f7df1e;
+    /* イエロー */
+    --color-php: #777bb4;
+    /* パープル */
+    --color-py: #3776ab;
+    /* ブルー */
+    --color-ts: #3178c6;
+    /* 濃いブルー */
+
+    --grid-max-width: 800px;
+
+    --glass-bg: rgba(13, 17, 23, 0.85);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xlg: 20px;
+    --radius-xxlg: 24px;
+    --radius-xxxlg: 28px;
+    --radius-xxxxlg: 32px;
+    --radius-full: 9999px;
+    --radius-none: 0px;
+    --font-mono: 'SF Mono', 'Fira Code', 'Menlo', 'Consolas', monospace;
+
+
+}
+
+/* ------------------------------------------------------------
+  Layout (Grid System)
+  中央に集中させる12カラム・レイアウト
+------------------------------------------------------------ */
+.l-container {
+    display: grid;
+    /* サイドの余白を fr で確保し、中央を最大1000pxに制御 */
+    grid-template-columns: 1fr minmax(auto, var(--grid-max-width)) 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+}
+
+/* 各セクションを中央のカラム（grid-column: 2）に配置 */
+.c-tabs,
+.c-list,
+.c-search {
+    grid-column: 2;
+}
+
+/* 全幅が必要な場合の修飾子 */
+.col-12 {
+    grid-column: 1 / -1;
+}
+
+/* ------------------------------------------------------------
+  [Top] Tabs
+------------------------------------------------------------ */
+.c-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--color-border);
+
+    overflow-x: auto;
+    white-space: nowrap;
+    /* 改行を防ぐ */
+    -webkit-overflow-scrolling: touch;
+    /* iOSでの慣性スクロールを有効化 */
+}
+
+.c-tabs__inner {
+    display: flex;
+    /* display: inline-flex; */
+    background: #010409;
+    /* padding: 4px; */
+    padding: 10px 16px;
+    gap: 8px;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    /* モバイルで溢れた場合にスクロール可能に */
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* スクロールバーを隠す（Firefox） */
+}
+
+.c-tabs__inner::-webkit-scrollbar {
+    display: none;
+    /* スクロールバーを隠す（Chrome/Safari） */
+}
+
+.c-tabs__item {
+    flex: 1;
+    /* flex: auto; */
+    /* flex: 0 0 auto; */
+    min-width: 80px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-sub);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    /* はみ出し防止 */
+    white-space: nowrap;
+}
+
+.c-tabs__item.is-active {
+    background: var(--color-border);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 767px) {
+    .c-tabs__item {
+        font-size: 11px;
+    }
+
+    /* JavaScript -> JS のように、中身を shorten の値に差し替えるテクニック */
+    .c-tabs__item::before {
+        content: attr(shorten);
+    }
+
+    /* 元の長いテキストを非表示にする（フォントサイズ0で消すのが安全） */
+    .c-tabs__item {
+        font-size: 0;
+    }
+
+    .c-tabs__item::before {
+        font-size: 11px;
+    }
+}
+
+/* ------------------------------------------------------------
+  [Middle] Card List
+------------------------------------------------------------ */
+.c-list {
+    padding: 40px 20px 180px;
+    /* 下部にSearch Boxの余白を確保 */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    /* カードを中央に寄せる */
+}
+
+
+.c-card {
+    --lang-color: var(--color-accent);
+    /* デフォルトカラー（設定がない場合） */
+    width: 100%;
+    /* 親の grid カラム幅（width）に追従 */
+    max-width: 768px;
+    /* 読みやすさを考慮した最大幅 */
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.c-card[code-lang="html"] {
+    --lang-color: var(--color-html);
+}
+
+.c-card[code-lang="css"] {
+    --lang-color: var(--color-css);
+}
+
+.c-card[code-lang="js"] {
+    --lang-color: var(--color-js);
+}
+
+.c-card[code-lang="php"] {
+    --lang-color: var(--color-php);
+}
+
+.c-card[code-lang="py"] {
+    --lang-color: var(--color-py);
+}
+
+.c-card[code-lang="ts"] {
+    --lang-color: var(--color-ts);
+}
+
+
+.c-card:hover {
+    /* border-color: var(--color-accent); */
+    border-color: color-mix(in srgb, var(--lang-color), transparent 50%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* 削除ボタン：ホバー時のみ表示 */
+.c-card__delete-form {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    opacity: 0;
+    /* 通常時は非表示 */
+    transition: opacity 0.25s ease;
+}
+
+/* カードホバーで表示 */
+.c-card:hover .c-card__delete-form {
+    opacity: 1;
+}
+
+.c-card__delete-btn {
+    /* リセット */
+    appearance: none;
+    background: rgba(248, 81, 73, 0.1);
+    /* 薄い赤（透過） */
+    border: 1px solid rgba(248, 81, 73, 0.2);
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+
+    /* サイズと形状 */
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+
+    /* 中央揃えの徹底 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* アニメーション設定 */
+    transition:
+        background-color 0.2s ease,
+        /* border-color 0.2s ease, */
+        /* transform 0.1s ease, */
+        /* box-shadow 0.2s ease, */
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+    opacity: 1;
+}
+
+/* 非表示状態のクラス */
+.c-card.is-hidden {
+    display: none;
+    /* 最終的に空間を消す */
+}
+
+/* 表示される瞬間のアニメーション */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 表示状態のクラス */
+.c-card.is-visible {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+/* ホバー時の変化：色の強調 */
+.c-card__delete-btn:hover {
+    background: #f85149;
+    /* 鮮やかな赤 */
+    border-color: #f85149;
+    box-shadow: 0 0 10px rgba(248, 81, 73, 0.4);
+}
+
+/* ホバー時に中のアイコン（×）を白くする */
+.c-card__delete-btn:hover .c-card__delete-icon::before,
+.c-card__delete-btn:hover .c-card__delete-icon::after {
+    background-color: #ffffff;
+}
+
+/* クリック（Active）時の変化 */
+.c-card__delete-btn:active {
+    background: #da3633;
+    /* 少し暗い赤 */
+    transform: scale(0.92);
+    /* わずかに縮小 */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.c-card__delete-icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+
+.c-card__delete-icon::before,
+.c-card__delete-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    /* 線の太さ */
+    background-color: #f85149;
+    /* 通常時は赤 */
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.c-card__delete-icon::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.c-card__delete-icon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+
+/* ------------------------------------------------------------
+  Modal & Toast Styles
+------------------------------------------------------------ */
+
+/* ダイアログ本体（中央配置） */
+.c-modal {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-card);
+    color: var(--color-text-main);
+    padding: 0;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+}
+
+/* 背景を暗くする */
+.c-modal::backdrop {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.c-modal__inner {
+    padding: 32px;
+    text-align: center;
+}
+
+.c-modal__title {
+    margin-bottom: 28px;
+    font-size: 18px;
+    /* color: var(--color-danger);  */
+    /* 警告 */
+    color: var(--color-text-main);
+}
+
+.c-modal__text {
+    font-size: 14px;
+    color: var(--color-text-sub);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.c-modal__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* 汎用ボタン */
+.c-btn {
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: filter 0.2s;
+    background: transparent;
+    color: var(--color-text-sub);
+}
+
+.c-btn--secondary:hover {
+    background: var(--color-border);
+    color: var(--color-text-main);
+}
+
+.c-btn--danger:hover {
+    background: var(--color-danger);
+    color: white;
+}
+
+/* .c-btn:hover {
+    filter: brightness(1.2);
+} */
+
+/* トースト通知 */
+.c-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    /* 最初は画面外（上） */
+    /* background: var(--color-accent); */
+    background: var(--color-danger);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    pointer-events: none;
+}
+
+.c-toast.is-show {
+    transform: translateX(-50%) translateY(0);
+    /* ふわっと降りてくる */
+}
+
+/* Header: メタ情報 */
+.c-card__header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.c-card__tag {
+    /* background: rgba(47, 129, 247, 0.15); */
+    /* color: var(--color-accent); */
+    background-color: color-mix(in srgb, var(--lang-color), transparent 70%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.c-card__time {
+    font-size: 11px;
+    color: var(--color-text-sub);
+    font-variant-numeric: tabular-nums;
+    /* 数字の幅を揃えてスキャン性を高める */
+    opacity: 0.7;
+    letter-spacing: 0.02em;
+    margin-left: auto;
+    margin-right: 40px;
+    /* 削除ボタンとの干渉を避ける */
+}
+
+.c-card:hover .c-card__time {
+    opacity: 1;
+    /* ホバー時に少しだけ強調 */
+}
+
+/* Body: コード表示エリア */
+.c-card__code-wrapper {
+    background: #010409;
+    padding: 20px;
+    border-left: 4px solid var(--lang-color);
+    margin: 0;
+}
+
+.c-card__code {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.7;
+    /* 可読性を高める行間 */
+    color: var(--color-text-main);
+    white-space: pre-wrap;
+    /* 折り返しを許可し横幅を維持 */
+    word-break: break-all;
+}
+
+/* Footer: コメント */
+.c-card__footer {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.01);
+    border-top: 1px solid var(--color-border);
+}
+
+.c-card__comment {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-sub);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* ------------------------------------------------------------
+  [Bottom] Search Box (Floating Modern UI)
+------------------------------------------------------------ */
+.c-search {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, var(--color-bg) 70%, transparent);
+    z-index: 100;
+}
+
+.c-search__form {
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+}
+
+.c-search__box {
+    background: #0d1117;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-xxxlg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 8px;
+}
+
+.c-search__input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    width: 100%;
+    min-height: 80px;
+    /* 入力しやすさを確保 */
+    max-height: 30vh;
+    /* 画面高さの30% */
+    /* 重要: これ以上は高くならないように制限 */
+    overflow-y: auto;
+    /* ★重要: 文字が溢れたらスクロールバーを表示 */
+    resize: none;
+    padding: 12px;
+    font-size: 16px;
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    /* --- スクロールの誤作動を防止 --- */
+    overscroll-behavior: contain;
+}
+
+.c-search__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-top: 1px solid var(--color-border);
+}
+
+.c-search__actions-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    /* max-width: 800px; */
+    width: 90%;
+    padding-right: 8px;
+}
+
+.c-search__select {
+    /* background: #161b22; */
+    background: transparent;
+    color: var(--color-text-sub);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    align-items: center;
+    font-weight: bold;
+
+}
+
+.c-form__input-comment {
+    flex: 1;
+    background: transparent;
+    border: none;
+    /* border-bottom: 1px solid transparent; */
+    color: var(--color-text-sub);
+    font-size: 13px;
+    /* font-size: 16px; */
+    max-width: var(--grid-max-width);
+    padding: 4px;
+    transition: border-color 0.2s;
+    /* color: white; */
+    outline: none;
+    border-bottom: none;
+    font-weight: bold;
+    background-clip: padding-box;
+    /* 背景のレンダリングを安定させる */
+}
+
+.c-form__input-comment:focus {
+    border-bottom-color: var(--color-accent);
+    outline: none;
+}
+
+.c-search__submit {
+    /* background: var(--color-accent); */
+    background: transparent;
+    color: var(--color-text-sub);
+    border: none;
+    border-radius: 21px;
+    padding: 8px 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.1s;
+}
+
+.c-search__submit:hover {
+    background: var(--color-border);
+    color: var(--color-text-main);
+    font-weight: bold;
+
+    filter: brightness(1.0);
+}
+
+.c-search__submit:active {
+    transform: scale(0.98);
+}
+
+/* フォーカスが当たっている要素を強調（アクセントカラーの光） */
+.c-search__select:focus,
+.c-form__input-comment:focus {
+    /* outline: 1px solid var(--color-accent); */
+    /* outline-offset: -1px; */
+    /* box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent), transparent 90%); */
+    background: rgba(255, 255, 255, 0.02);
+}

@@ -1,0 +1,15 @@
+# macOS files
+.DS_Store
+
+# VS Code の設定ファイル
+.vscode/
+
+# !機密情報 環境変数
+.env
+
+# json の保存フォルダ
+data/
+
+# bkの保存フォルダ
+__bk/
+
