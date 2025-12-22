@@ -163,7 +163,7 @@
   [Middle] Card List
 ------------------------------------------------------------ */
 .c-list {
-    padding: 40px 20px 240px;
+    padding: 40px 20px 42vh;
     /* 下部にSearch Boxの余白を確保 */
     display: flex;
     flex-direction: column;
