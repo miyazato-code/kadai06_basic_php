@@ -5,7 +5,7 @@
 - コードをメモする
 
 ### 3. アプリのデプロイURL
-- https://miyazato-code.sakura.ne.jp/codydex/
+- 
   
 ### 4. アプリのログイン用IDまたはPassword（ある場合）
 - ID: 今回なし
